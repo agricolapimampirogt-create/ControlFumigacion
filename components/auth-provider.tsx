@@ -4,7 +4,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut as firebaseSign
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
-import { getUserProfile, listUsers, saveUser } from "@/lib/data";
+import { clearDataCache, clearLocalAppData, getUserProfile, listUsers, saveUser } from "@/lib/data";
 import type { AppUser } from "@/types";
 
 type AuthContextValue = {
@@ -92,10 +92,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
+        clearDataCache();
         setUser(null);
         setLoading(false);
         return;
       }
+      clearDataCache();
       const profile = await resolveFirebaseProfile({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -109,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     try {
+      clearDataCache();
       if (isFirebaseConfigured && auth) {
         try {
           const credential = await signInWithEmailAndPassword(auth, email, password);
@@ -139,9 +142,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     if (isFirebaseConfigured && auth) await firebaseSignOut(auth);
-    window.localStorage.removeItem(currentUserKey);
+    clearLocalAppData();
     setUser(null);
-    router.push("/login");
+    router.replace("/login");
+    router.refresh();
   }, [router]);
 
   const value = useMemo(

@@ -89,6 +89,25 @@ function setCollectionCache<K extends CollectionName>(name: K, rows: CollectionM
   (collectionCache as Record<CollectionName, unknown>)[name] = rows;
 }
 
+export function clearDataCache() {
+  Object.keys(collectionCache).forEach((key) => {
+    delete (collectionCache as Record<string, unknown>)[key];
+  });
+}
+
+export function clearLocalAppData() {
+  clearDataCache();
+  if (!hasWindow()) return;
+
+  Object.keys(window.localStorage)
+    .filter((key) => key.startsWith("agricola:"))
+    .forEach((key) => window.localStorage.removeItem(key));
+
+  Object.keys(window.sessionStorage)
+    .filter((key) => key.startsWith("agricola:"))
+    .forEach((key) => window.sessionStorage.removeItem(key));
+}
+
 function hasWindow() {
   return typeof window !== "undefined";
 }
@@ -126,8 +145,7 @@ function fromFirestore<T extends { id: string }>(snapshot: { id: string; data: (
 }
 
 function shouldUseLocalFallback(error: unknown) {
-  const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
-  return code === "permission-denied" || code === "unavailable";
+  return false;
 }
 
 function normalizeUser(user: AppUser & { activo?: boolean }) {
@@ -211,10 +229,9 @@ async function getDocsByIds<K extends CollectionName>(name: K, ids: string[]) {
 }
 
 async function listCollection<K extends CollectionName>(name: K): Promise<CollectionMap[K][]> {
-  const cached = getCollectionCache(name);
-  if (cached) return [...cached] as CollectionMap[K][];
-
   if (!isFirebaseConfigured || !db) {
+    const cached = getCollectionCache(name);
+    if (cached) return [...cached] as CollectionMap[K][];
     const rows = readLocal(name);
     setCollectionCache(name, rows);
     return rows;
@@ -486,9 +503,6 @@ export async function listStages(user?: AppUser | null) {
     return user?.rol === "tecnico" ? rows.filter((stage) => stage.technicianId === user.id) : rows;
   }
 
-  const cached = collectionCache.fumigationStages;
-  if (cached) return user?.rol === "tecnico" ? cached.filter((stage) => stage.technicianId === user.id) : [...cached];
-
   const ref = collection(db, "fumigationStages");
   const snap =
     user?.rol === "tecnico"
@@ -497,14 +511,8 @@ export async function listStages(user?: AppUser | null) {
   try {
     const result = await getDocs(snap);
     const firestoreRows = result.docs.map((item) => fromFirestore<FumigationStage>(item));
-    if (firestoreRows.length) {
-      collectionCache.fumigationStages = firestoreRows;
-      return firestoreRows;
-    }
-
-    const rows = readLocal("fumigationStages");
-    collectionCache.fumigationStages = rows;
-    return user?.rol === "tecnico" ? rows.filter((stage) => stage.technicianId === user.id) : rows;
+    collectionCache.fumigationStages = firestoreRows;
+    return firestoreRows;
   } catch (error) {
     if (shouldUseLocalFallback(error)) {
       const rows = readLocal("fumigationStages");
@@ -516,52 +524,40 @@ export async function listStages(user?: AppUser | null) {
 }
 
 export async function getStage(id: string) {
-  const localStage = readLocal("fumigationStages").find((stage) => stage.id === id) || null;
-
   if (!isFirebaseConfigured || !db) {
+    const localStage = readLocal("fumigationStages").find((stage) => stage.id === id) || null;
     return localStage;
   }
   try {
     const snap = await getDoc(doc(db, "fumigationStages", id));
-    return snap.exists() ? fromFirestore<FumigationStage>(snap) : localStage;
+    return snap.exists() ? fromFirestore<FumigationStage>(snap) : null;
   } catch (error) {
-    if (shouldUseLocalFallback(error)) {
-      return localStage;
-    }
     throw error;
   }
 }
 
 export async function getStageByCode(code: string) {
-  const localStage = readLocal("fumigationStages").find((stage) => stage.code.toUpperCase() === code.toUpperCase()) || null;
-
   if (!isFirebaseConfigured || !db) {
+    const localStage = readLocal("fumigationStages").find((stage) => stage.code.toUpperCase() === code.toUpperCase()) || null;
     return localStage;
   }
   try {
     const snap = await getDocs(query(collection(db, "fumigationStages"), where("code", "==", code), limit(1)));
-    return snap.docs[0] ? fromFirestore<FumigationStage>(snap.docs[0]) : localStage;
+    return snap.docs[0] ? fromFirestore<FumigationStage>(snap.docs[0]) : null;
   } catch (error) {
-    if (shouldUseLocalFallback(error)) {
-      return localStage;
-    }
     throw error;
   }
 }
 
 export async function getPublicStageByCode(code: string) {
-  const localStage = readLocal("publicStages").find((stage) => stage.code.toUpperCase() === code.toUpperCase()) || null;
-
   if (!isFirebaseConfigured || !db) {
+    const localStage = readLocal("publicStages").find((stage) => stage.code.toUpperCase() === code.toUpperCase()) || null;
     return localStage;
   }
   try {
     const snap = await getDocs(query(collection(db, "publicStages"), where("code", "==", code), limit(1)));
-    return snap.docs[0] ? fromFirestore<PublicStage>(snap.docs[0]) : localStage;
+    return snap.docs[0] ? fromFirestore<PublicStage>(snap.docs[0]) : null;
   } catch (error) {
-    if (shouldUseLocalFallback(error)) {
-      return localStage;
-    }
     throw error;
   }
 }

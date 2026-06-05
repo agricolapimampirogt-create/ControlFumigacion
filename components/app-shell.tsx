@@ -52,6 +52,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (href !== pathname && !pathname.startsWith(`${href}/`)) setNavigatingTo(href);
   }
 
+  async function handleLogout() {
+    setOpen(false);
+    await logout();
+  }
+
   useEffect(() => {
     setNavigatingTo("");
     setOpen(false);
@@ -109,7 +114,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="absolute bottom-4 left-4 right-4 rounded-md border bg-emerald-50 p-3">
           <p className="text-sm font-semibold">{user?.nombre}</p>
           <p className="text-xs capitalize text-muted-foreground">{user?.rol}</p>
-          <Button variant="ghost" className="mt-3 w-full justify-start" onClick={logout}>
+          <Button variant="ghost" className="mt-3 w-full justify-start" onClick={handleLogout}>
             <LogOut className="h-4 w-4" />
             Salir
           </Button>
@@ -135,6 +140,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Button>
             </div>
             {menu}
+            <div className="mt-5 rounded-md border bg-emerald-50 p-3">
+              <p className="text-sm font-semibold">{user?.nombre}</p>
+              <p className="text-xs capitalize text-muted-foreground">{user?.rol}</p>
+              <Button variant="danger" className="mt-3 h-12 w-full justify-center" onClick={handleLogout}>
+                <LogOut className="h-4 w-4" />
+                Cerrar sesion
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}

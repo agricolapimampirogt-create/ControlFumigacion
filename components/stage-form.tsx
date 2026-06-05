@@ -259,6 +259,7 @@ export function StageForm({ initial }: StageFormProps) {
   const [quickPhone, setQuickPhone] = useState("");
   const [whatsappUrl, setWhatsappUrl] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   const {
     register,
@@ -366,19 +367,24 @@ export function StageForm({ initial }: StageFormProps) {
 
   async function createQuickClient() {
     if (!quickName || !quickPhone) return;
+    setSaveError("");
     const parts = quickName.trim().split(/\s+/);
-    const created = await saveClient({
-      nombres: parts.slice(0, -1).join(" ") || quickName,
-      apellidos: parts.at(-1) || "",
-      telefono: quickPhone,
-      whatsapp: quickPhone,
-      direccion: "",
-      sector: "",
-      estado: "activo",
-    });
-    selectClient(created);
-    setQuickName("");
-    setQuickPhone("");
+    try {
+      const created = await saveClient({
+        nombres: parts.slice(0, -1).join(" ") || quickName,
+        apellidos: parts.at(-1) || "",
+        telefono: quickPhone,
+        whatsapp: quickPhone,
+        direccion: "",
+        sector: "",
+        estado: "activo",
+      });
+      selectClient(created);
+      setQuickName("");
+      setQuickPhone("");
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "No se pudo crear el cliente en Firebase.");
+    }
   }
 
   function saveDraft() {
@@ -401,41 +407,46 @@ export function StageForm({ initial }: StageFormProps) {
 
   async function onSubmit(values: StageFormValues) {
     if (!user || !selectedClient || !selectedCrop || !selectedSite) return;
+    setSaveError("");
 
-    const stagePests = selectedPests.map((pest) => ({ pestId: pest.id, name: pest.nombreComun }));
-    const stageProducts = productItems.map((item) => ({
-      productId: item.product.id,
-      name: item.product.nombre,
-      quantity: Number(item.quantity),
-    }));
+    try {
+      const stagePests = selectedPests.map((pest) => ({ pestId: pest.id, name: pest.nombreComun }));
+      const stageProducts = productItems.map((item) => ({
+        productId: item.product.id,
+        name: item.product.nombre,
+        quantity: Number(item.quantity),
+      }));
 
-    const saved = await saveStage({
-      id: initial?.id,
-      code: initial?.code || (await generateUniqueStageCode()),
-      clientId: selectedClient.id,
-      clientName: clientDisplayName(selectedClient),
-      clientPhone: values.clientPhone,
-      cropId: selectedCrop.id,
-      cropName: selectedCrop.nombre,
-      siteId: selectedSite.id,
-      siteName: selectedSite.nombre,
-      pests: stagePests,
-      technicalObservation: values.technicalObservation,
-      products: stageProducts,
-      status: values.status,
-      technicianId: initial?.technicianId || user.id,
-      technicianName: initial?.technicianName || user.nombre,
-      cropPhotoUrl: values.cropPhotoUrl,
-      internalNotes: values.internalNotes,
-    });
+      const saved = await saveStage({
+        id: initial?.id,
+        code: initial?.code || (await generateUniqueStageCode()),
+        clientId: selectedClient.id,
+        clientName: clientDisplayName(selectedClient),
+        clientPhone: values.clientPhone,
+        cropId: selectedCrop.id,
+        cropName: selectedCrop.nombre,
+        siteId: selectedSite.id,
+        siteName: selectedSite.nombre,
+        pests: stagePests,
+        technicalObservation: values.technicalObservation,
+        products: stageProducts,
+        status: values.status,
+        technicianId: initial?.technicianId || user.id,
+        technicianName: initial?.technicianName || user.nombre,
+        cropPhotoUrl: values.cropPhotoUrl,
+        internalNotes: values.internalNotes,
+      });
 
-    const settings = await getSettings();
-    const url = buildWhatsappUrl(saved.clientPhone, buildWhatsappMessage(saved, settings));
-    setWhatsappUrl(url);
-    await createNotification(saved);
-    window.localStorage.removeItem(draftKey);
-    window.open(url, "_blank", "noopener,noreferrer");
-    router.push(`/etapas/${saved.id}`);
+      const settings = await getSettings();
+      const url = buildWhatsappUrl(saved.clientPhone, buildWhatsappMessage(saved, settings));
+      setWhatsappUrl(url);
+      await createNotification(saved);
+      window.localStorage.removeItem(draftKey);
+      window.open(url, "_blank", "noopener,noreferrer");
+      router.push(`/etapas/${saved.id}`);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "No se pudo guardar la etapa en Firebase.");
+    }
   }
 
   return (
@@ -447,6 +458,11 @@ export function StageForm({ initial }: StageFormProps) {
         <p className="text-sm leading-relaxed text-muted-foreground">
           Captura rapida para campo con busquedas limitadas y controles tactiles.
         </p>
+        {saveError ? (
+          <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+            {saveError}
+          </p>
+        ) : null}
       </div>
 
       <Card className="overflow-hidden">

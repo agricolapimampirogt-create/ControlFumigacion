@@ -46,6 +46,7 @@ export function EntityManager<T extends { id: string; estado?: string }>({
   const [editing, setEditing] = useState<T | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<T | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [formError, setFormError] = useState("");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -73,20 +74,27 @@ export function EntityManager<T extends { id: string; estado?: string }>({
 
   function startCreate() {
     setEditing(null);
+    setFormError("");
     reset({ estado: "activo" });
     setOpen(true);
   }
 
   function startEdit(row: T) {
     setEditing(row);
+    setFormError("");
     reset(row);
     setOpen(true);
   }
 
   async function onSubmit(values: Record<string, unknown>) {
-    await save({ ...values, id: editing?.id } as Omit<T, "id"> & { id?: string });
-    setOpen(false);
-    await refresh();
+    setFormError("");
+    try {
+      await save({ ...values, id: editing?.id } as Omit<T, "id"> & { id?: string });
+      setOpen(false);
+      await refresh();
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "No se pudo guardar en Firebase.");
+    }
   }
 
   function deleteLabel(row: T | null) {
@@ -126,6 +134,11 @@ export function EntityManager<T extends { id: string; estado?: string }>({
             <h2 className="text-base font-bold sm:text-lg">{editing ? "Editar registro" : "Nuevo registro"}</h2>
           </CardHeader>
           <CardContent className="p-3 sm:p-4">
+            {formError ? (
+              <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                {formError}
+              </p>
+            ) : null}
             <form className="grid min-w-0 gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
               {fields.map((field) => {
                 const error = errors[field.name]?.message as string | undefined;
