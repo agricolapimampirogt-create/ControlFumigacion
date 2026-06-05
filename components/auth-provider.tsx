@@ -4,7 +4,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut as firebaseSign
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { auth, isFirebaseConfigured } from "@/lib/firebase";
-import { getUserProfile, listUsers } from "@/lib/data";
+import { getUserProfile, listUsers, saveUser } from "@/lib/data";
 import type { AppUser } from "@/types";
 
 type AuthContextValue = {
@@ -18,19 +18,39 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const currentUserKey = "agricola:current-user";
-const bootstrapAdminEmail = (
-  process.env.NEXT_PUBLIC_BOOTSTRAP_ADMIN_EMAIL || "adminagricola@gmail.com"
-).toLowerCase();
+const bootstrapAdminEmails = [
+  process.env.NEXT_PUBLIC_BOOTSTRAP_ADMIN_EMAIL,
+  process.env.NEXT_PUBLIC_BOOTSTRAP_ADMIN_EMAILS,
+  "adminagricola@gmail.com",
+  "agricolapimampirogt@gmail.com",
+]
+  .flatMap((value) => (value || "").split(","))
+  .map((value) => value.trim().toLowerCase())
+  .filter(Boolean);
 
 function fallbackProfile(firebaseUser: { uid: string; email: string | null; displayName: string | null }): AppUser {
   const email = firebaseUser.email || "";
   return {
     id: firebaseUser.uid,
-    nombre: firebaseUser.displayName || (email === bootstrapAdminEmail ? "Admin" : email) || "Usuario",
+    nombre: firebaseUser.displayName || (bootstrapAdminEmails.includes(email.toLowerCase()) ? "Admin" : email) || "Usuario",
     email,
-    rol: email.toLowerCase() === bootstrapAdminEmail ? "admin" : "tecnico",
+    rol: bootstrapAdminEmails.includes(email.toLowerCase()) ? "admin" : "tecnico",
     estado: "activo",
   };
+}
+
+async function resolveFirebaseProfile(firebaseUser: { uid: string; email: string | null; displayName: string | null }) {
+  const savedProfile = await getUserProfile(firebaseUser.uid);
+  if (savedProfile) return savedProfile;
+
+  const profile = fallbackProfile(firebaseUser);
+  if (profile.rol !== "admin") return profile;
+
+  try {
+    return await saveUser(profile);
+  } catch {
+    return profile;
+  }
 }
 
 function authErrorMessage(error: unknown) {
@@ -76,13 +96,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
         return;
       }
-      const profile =
-        (await getUserProfile(firebaseUser.uid)) ||
-        fallbackProfile({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        });
+      const profile = await resolveFirebaseProfile({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+      });
       setUser(profile);
       setLoading(false);
     });
@@ -94,13 +112,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isFirebaseConfigured && auth) {
         try {
           const credential = await signInWithEmailAndPassword(auth, email, password);
-          const profile =
-            (await getUserProfile(credential.user.uid)) ||
-            fallbackProfile({
-              uid: credential.user.uid,
-              email: credential.user.email,
-              displayName: credential.user.displayName,
-            });
+          const profile = await resolveFirebaseProfile({
+            uid: credential.user.uid,
+            email: credential.user.email,
+            displayName: credential.user.displayName,
+          });
           setUser(profile);
           return;
         } catch (error) {

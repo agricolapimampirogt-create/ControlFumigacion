@@ -6,16 +6,27 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isBootstrapAdmin() {
+      return signedIn() && request.auth.token.email in [
+        "adminagricola@gmail.com",
+        "agricolapimampirogt@gmail.com"
+      ];
+    }
+
+    function hasUserProfile() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
     function currentUser() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
     function isAdmin() {
-      return signedIn() && currentUser().rol == "admin";
+      return isBootstrapAdmin() || (hasUserProfile() && currentUser().rol == "admin");
     }
 
     function isTechnician() {
-      return signedIn() && currentUser().rol == "tecnico";
+      return hasUserProfile() && currentUser().rol == "tecnico";
     }
 
     match /users/{userId} {
@@ -63,7 +74,8 @@ service cloud.firestore {
     }
 
     match /notifications/{id} {
-      allow read, write: if isAdmin();
+      allow read, update, delete: if isAdmin();
+      allow create: if isAdmin() || isTechnician();
     }
 
     match /settings/{id} {
