@@ -1,0 +1,74 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return signedIn() && currentUser().rol == "admin";
+    }
+
+    function isTechnician() {
+      return signedIn() && currentUser().rol == "tecnico";
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (isAdmin() || request.auth.uid == userId);
+      allow write: if isAdmin();
+    }
+
+    match /clients/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin() || isTechnician();
+      allow delete: if isAdmin();
+    }
+
+    match /crops/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /pests/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /products/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /sites/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /fumigationStages/{id} {
+      allow read: if isAdmin() || (isTechnician() && resource.data.technicianId == request.auth.uid);
+      allow create: if isAdmin() || (isTechnician() && request.resource.data.technicianId == request.auth.uid);
+      allow update: if isAdmin() || (isTechnician() && resource.data.technicianId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /publicStages/{id} {
+      allow read: if true;
+      allow write: if isAdmin() || isTechnician();
+      allow delete: if isAdmin();
+    }
+
+    match /notifications/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

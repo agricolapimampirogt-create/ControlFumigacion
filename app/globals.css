@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 150 33% 98%;
+  --foreground: 154 28% 14%;
+  --card: 0 0% 100%;
+  --card-foreground: 154 28% 14%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 154 28% 14%;
+  --primary: 148 55% 28%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 196 56% 92%;
+  --secondary-foreground: 196 45% 21%;
+  --muted: 150 24% 93%;
+  --muted-foreground: 154 13% 38%;
+  --accent: 42 84% 88%;
+  --accent-foreground: 38 44% 22%;
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 150 20% 85%;
+  --input: 150 20% 85%;
+  --ring: 148 55% 28%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(187, 222, 251, 0.55), transparent 28rem),
+    linear-gradient(180deg, #f6fbf7 0%, #eef8f5 42%, #f9fbf6 100%);
+  color: hsl(var(--foreground));
+  overflow-x: hidden;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .app-shell-main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body {
+    background: white;
+  }
+}

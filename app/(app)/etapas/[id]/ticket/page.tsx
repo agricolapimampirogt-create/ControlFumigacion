@@ -1,0 +1,104 @@
+"use client";
+
+import { QRCodeSVG } from "qrcode.react";
+import { Printer } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/components/auth-provider";
+import { CompanyLogo } from "@/components/company-logo";
+import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { getSettings, getStage } from "@/lib/data";
+import { formatDate } from "@/lib/utils";
+import { buildPublicUrl } from "@/lib/whatsapp";
+import type { FumigationStage } from "@/types";
+
+export default function TicketPage() {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const { isAdmin } = useAuth();
+  const [stage, setStage] = useState<FumigationStage | null>(null);
+  const [publicUrl, setPublicUrl] = useState("");
+
+  useEffect(() => {
+    if (!isAdmin) {
+      router.replace("/dashboard");
+      return;
+    }
+    async function load() {
+      const item = await getStage(params.id);
+      if (item) {
+        setPublicUrl(buildPublicUrl(item.code, await getSettings()));
+      }
+      setStage(item);
+    }
+    load();
+  }, [isAdmin, params.id, router]);
+
+  if (!stage) return <p className="text-sm font-medium">Cargando ticket...</p>;
+
+  return (
+    <section className="mx-auto grid max-w-3xl gap-4">
+      <div className="no-print flex justify-end">
+        <Button onClick={() => window.print()}>
+          <Printer className="h-4 w-4" />
+          Imprimir
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="grid gap-5">
+          <div className="border-b pb-4 text-center">
+            <CompanyLogo className="mb-3 justify-center" imageClassName="h-20" />
+            <h1 className="text-2xl font-black">AGRICOLA PIMAMPIRO</h1>
+            <p className="text-sm text-muted-foreground">Reporte administrativo de fumigacion</p>
+          </div>
+
+          <div className="grid gap-3 text-sm sm:grid-cols-2">
+            <Info label="Codigo" value={stage.code} />
+            <Info label="Fecha" value={formatDate(stage.createdAt)} />
+            <Info label="Cliente" value={stage.clientName} />
+            <Info label="Telefono" value={stage.clientPhone} />
+            <Info label="Cultivo" value={stage.cropName} />
+            <Info label="Sitio" value={stage.siteName} />
+            <Info label="Tecnico" value={stage.technicianName} />
+            <div><span className="font-semibold">Estado: </span><StatusBadge status={stage.status} /></div>
+          </div>
+
+          <div>
+            <p className="font-semibold">Plagas</p>
+            <p className="text-sm">{stage.pests.map((pest) => pest.name).join(", ")}</p>
+          </div>
+          <div>
+            <p className="font-semibold">Observacion tecnica</p>
+            <p className="text-sm">{stage.technicalObservation}</p>
+          </div>
+          <div>
+            <p className="mb-2 font-semibold">Productos registrados</p>
+            <table className="w-full text-left text-sm">
+              <thead className="bg-emerald-50">
+                <tr><th className="p-2">Producto</th><th className="p-2">Cantidad</th></tr>
+              </thead>
+              <tbody>
+                {stage.products.map((product, index) => (
+                  <tr key={`${product.productId}-${index}`} className="border-t">
+                    <td className="p-2">{product.name}</td>
+                    <td className="p-2">{product.quantity}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex items-center justify-between gap-4 border-t pt-4">
+            <p className="text-xs text-muted-foreground">{publicUrl}</p>
+            <QRCodeSVG value={publicUrl} size={116} />
+          </div>
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return <p><span className="font-semibold">{label}: </span>{value}</p>;
+}
