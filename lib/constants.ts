@@ -11,7 +11,7 @@ export const defaultSettings: Settings = {
   photoUrl:
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1400&q=80",
   publicBaseUrl:
-    process.env.NEXT_PUBLIC_PUBLIC_BASE_URL || "https://agricolapimampiro.com",
+    process.env.NEXT_PUBLIC_PUBLIC_BASE_URL || "https://agricolapimampiro.netlify.app",
 };
 
 export const statusLabels: Record<StageStatus, string> = {

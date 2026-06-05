@@ -2,8 +2,15 @@ import { defaultSettings, statusLabels } from "@/lib/constants";
 import { normalizePhoneForWhatsapp } from "@/lib/utils";
 import type { FumigationStage, Settings } from "@/types";
 
+const customerPortalBaseUrl = "https://agricolapimampiro.netlify.app";
+
 export function buildPublicUrl(code: string, settings: Settings = defaultSettings) {
-  return `${settings.publicBaseUrl.replace(/\/$/, "")}/consulta/${code}`;
+  const configuredBaseUrl =
+    process.env.NEXT_PUBLIC_PUBLIC_BASE_URL || settings.publicBaseUrl || defaultSettings.publicBaseUrl;
+  const baseUrl = configuredBaseUrl.includes("agricolapimampiro.com")
+    ? customerPortalBaseUrl
+    : configuredBaseUrl;
+  return `${baseUrl.replace(/\/$/, "")}/consulta/${code}`;
 }
 
 export function buildWhatsappMessage(
