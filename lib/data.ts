@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  endAt,
   getDoc,
   getDocs,
   limit,
@@ -12,6 +13,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  startAt,
   where,
 } from "firebase/firestore";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
@@ -77,6 +79,7 @@ const seed: { [K in CollectionName]: CollectionMap[K][] } = {
 };
 
 const collectionCache: Partial<{ [K in CollectionName]: CollectionMap[K][] }> = {};
+const searchLimitDefault = 20;
 
 function getCollectionCache<K extends CollectionName>(name: K) {
   return collectionCache[name] as CollectionMap[K][] | undefined;
@@ -132,6 +135,79 @@ function normalizeUser(user: AppUser & { activo?: boolean }) {
     ...user,
     estado: user.estado || (user.activo === false ? "inactivo" : "activo"),
   } satisfies AppUser;
+}
+
+function normalizeSearch(value: unknown) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function activeOnly<T>(rows: T[]) {
+  return rows.filter((row) => {
+    const estado = (row as { estado?: string }).estado;
+    return !estado || estado === "activo";
+  });
+}
+
+function uniqueRows<T extends { id: string }>(rows: T[]) {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    if (seen.has(row.id)) return false;
+    seen.add(row.id);
+    return true;
+  });
+}
+
+function includesTerm(row: Record<string, unknown>, term: string, fields: string[]) {
+  const normalizedTerm = normalizeSearch(term);
+  if (!normalizedTerm) return true;
+  return fields.some((field) => normalizeSearch(row[field]).includes(normalizedTerm));
+}
+
+async function searchPrefix<K extends CollectionName>(
+  name: K,
+  field: string,
+  term: string,
+  maxResults = searchLimitDefault,
+) {
+  if (!isFirebaseConfigured || !db) {
+    return activeOnly(readLocal(name))
+      .filter((row) => includesTerm(row as Record<string, unknown>, term, [field]))
+      .slice(0, maxResults);
+  }
+
+  try {
+    const ref = collection(db, name);
+    const snap = term.trim()
+      ? await getDocs(query(ref, orderBy(field), startAt(term.trim()), endAt(`${term.trim()}\uf8ff`), limit(maxResults)))
+      : await getDocs(query(ref, orderBy(field), limit(maxResults)));
+    return activeOnly(snap.docs.map((item) => fromFirestore<CollectionMap[K]>(item))).slice(0, maxResults);
+  } catch (error) {
+    if (shouldUseLocalFallback(error)) {
+      return activeOnly(readLocal(name))
+        .filter((row) => includesTerm(row as Record<string, unknown>, term, [field]))
+        .slice(0, maxResults);
+    }
+    throw error;
+  }
+}
+
+async function getDocsByIds<K extends CollectionName>(name: K, ids: string[]) {
+  const uniqueIds = [...new Set(ids)].filter(Boolean);
+  if (!uniqueIds.length) return [] as CollectionMap[K][];
+
+  if (!isFirebaseConfigured || !db) {
+    const rows = readLocal(name);
+    return uniqueIds.map((id) => rows.find((row) => row.id === id)).filter(Boolean) as CollectionMap[K][];
+  }
+
+  const firestoreDb = db;
+  const rows = await Promise.all(
+    uniqueIds.map(async (id) => {
+      const snap = await getDoc(doc(firestoreDb, name, id));
+      return snap.exists() ? fromFirestore<CollectionMap[K]>(snap) : null;
+    }),
+  );
+  return rows.filter(Boolean) as CollectionMap[K][];
 }
 
 async function listCollection<K extends CollectionName>(name: K): Promise<CollectionMap[K][]> {
@@ -233,6 +309,160 @@ export const listPests = () => listCollection("pests");
 export const listProducts = () => listCollection("products");
 export const listSites = () => listCollection("sites");
 export const listNotifications = () => listCollection("notifications");
+
+export async function searchClients(term: string, maxResults = searchLimitDefault): Promise<Client[]> {
+  const fields = ["nombres", "apellidos", "telefono", "whatsapp", "cedula"];
+
+  if (!isFirebaseConfigured || !db) {
+    return activeOnly(readLocal("clients"))
+      .filter((client) => {
+        const full = `${client.nombres} ${client.apellidos}`;
+        return includesTerm({ ...client, full }, term, [...fields, "full"]);
+      })
+      .slice(0, maxResults) as Client[];
+  }
+
+  try {
+    const queries = term.trim()
+      ? await Promise.all([
+          searchPrefix("clients", "nombres", term, maxResults),
+          searchPrefix("clients", "apellidos", term, maxResults),
+          searchPrefix("clients", "telefono", term, maxResults),
+          searchPrefix("clients", "cedula", term, maxResults),
+        ])
+      : [await searchPrefix("clients", "nombres", term, maxResults)];
+    return uniqueRows(queries.flat() as Client[]).slice(0, maxResults);
+  } catch (error) {
+    if (shouldUseLocalFallback(error)) {
+      return activeOnly(readLocal("clients"))
+        .filter((client) => {
+          const full = `${client.nombres} ${client.apellidos}`;
+          return includesTerm({ ...client, full }, term, [...fields, "full"]);
+        })
+        .slice(0, maxResults) as Client[];
+    }
+    throw error;
+  }
+}
+
+export async function getClientSiteCount(clientId: string) {
+  if (!clientId) return 0;
+
+  if (!isFirebaseConfigured || !db) {
+    const stageSiteIds = readLocal("fumigationStages")
+      .filter((stage) => stage.clientId === clientId)
+      .map((stage) => stage.siteId);
+    const directSiteIds = (readLocal("sites") as Array<Site & { clientId?: string }>)
+      .filter((site) => site.clientId === clientId)
+      .map((site) => site.id);
+    return new Set([...stageSiteIds, ...directSiteIds]).size;
+  }
+
+  try {
+    const [stageSnap, siteSnap] = await Promise.all([
+      getDocs(query(collection(db, "fumigationStages"), where("clientId", "==", clientId), limit(100))),
+      getDocs(query(collection(db, "sites"), where("clientId", "==", clientId), limit(100))),
+    ]);
+    const stageSiteIds = stageSnap.docs.map((item) => fromFirestore<FumigationStage>(item).siteId);
+    const directSiteIds = siteSnap.docs.map((item) => item.id);
+    return new Set([...stageSiteIds, ...directSiteIds]).size;
+  } catch (error) {
+    if (shouldUseLocalFallback(error)) return 0;
+    throw error;
+  }
+}
+
+export async function searchSitesForClient(clientId: string, term: string, maxResults = searchLimitDefault): Promise<Site[]> {
+  if (!clientId) return [];
+
+  if (!isFirebaseConfigured || !db) {
+    const sites = activeOnly(readLocal("sites") as Array<Site & { clientId?: string }>);
+    const stageSiteIds = readLocal("fumigationStages")
+      .filter((stage) => stage.clientId === clientId)
+      .map((stage) => stage.siteId);
+    const related = sites.filter((site) => site.clientId === clientId || stageSiteIds.includes(site.id));
+    const fallback = term.trim()
+      ? sites.filter((site) => includesTerm(site as Record<string, unknown>, term, ["nombre", "sector"]))
+      : [];
+    return uniqueRows([...related, ...fallback])
+      .filter((site) => includesTerm(site as Record<string, unknown>, term, ["nombre", "sector"]))
+      .slice(0, maxResults) as Site[];
+  }
+
+  try {
+    const [stageSnap, directSnap] = await Promise.all([
+      getDocs(query(collection(db, "fumigationStages"), where("clientId", "==", clientId), limit(maxResults * 2))),
+      getDocs(query(collection(db, "sites"), where("clientId", "==", clientId), limit(maxResults))),
+    ]);
+    const historicalIds = stageSnap.docs.map((item) => fromFirestore<FumigationStage>(item).siteId);
+    const historicalSites = await getDocsByIds("sites", historicalIds);
+    const directSites = directSnap.docs.map((item) => fromFirestore<Site>(item));
+    const fallback = term.trim() ? await searchPrefix("sites", "nombre", term, maxResults) : [];
+    return uniqueRows([...directSites, ...historicalSites, ...(fallback as Site[])])
+      .filter((site) => includesTerm(site as Record<string, unknown>, term, ["nombre", "sector"]))
+      .slice(0, maxResults);
+  } catch (error) {
+    if (shouldUseLocalFallback(error)) return [];
+    throw error;
+  }
+}
+
+export async function searchCropsForSite(siteId: string, term: string, maxResults = searchLimitDefault): Promise<Crop[]> {
+  if (!siteId) return [];
+
+  if (!isFirebaseConfigured || !db) {
+    const crops = activeOnly(readLocal("crops") as Array<Crop & { siteId?: string; siteIds?: string[] }>);
+    const stageCropIds = readLocal("fumigationStages")
+      .filter((stage) => stage.siteId === siteId)
+      .map((stage) => stage.cropId);
+    const related = crops.filter((crop) => crop.siteId === siteId || crop.siteIds?.includes(siteId) || stageCropIds.includes(crop.id));
+    const fallback = term.trim()
+      ? crops.filter((crop) => includesTerm(crop as Record<string, unknown>, term, ["nombre", "tipo"]))
+      : [];
+    return uniqueRows([...related, ...fallback])
+      .filter((crop) => includesTerm(crop as Record<string, unknown>, term, ["nombre", "tipo"]))
+      .slice(0, maxResults) as Crop[];
+  }
+
+  try {
+    const [stageSnap, directSnap] = await Promise.all([
+      getDocs(query(collection(db, "fumigationStages"), where("siteId", "==", siteId), limit(maxResults * 2))),
+      getDocs(query(collection(db, "crops"), where("siteId", "==", siteId), limit(maxResults))),
+    ]);
+    const historicalIds = stageSnap.docs.map((item) => fromFirestore<FumigationStage>(item).cropId);
+    const historicalCrops = await getDocsByIds("crops", historicalIds);
+    const directCrops = directSnap.docs.map((item) => fromFirestore<Crop>(item));
+    const fallback = term.trim() ? await searchPrefix("crops", "nombre", term, maxResults) : [];
+    return uniqueRows([...directCrops, ...historicalCrops, ...(fallback as Crop[])])
+      .filter((crop) => includesTerm(crop as Record<string, unknown>, term, ["nombre", "tipo"]))
+      .slice(0, maxResults);
+  } catch (error) {
+    if (shouldUseLocalFallback(error)) return [];
+    throw error;
+  }
+}
+
+export async function searchPests(term: string, maxResults = searchLimitDefault): Promise<Pest[]> {
+  const byName = await searchPrefix("pests", "nombreComun", term, maxResults);
+  if (!term.trim()) return byName;
+  return uniqueRows([
+    ...byName,
+    ...activeOnly(readLocal("pests")).filter((pest) =>
+      includesTerm(pest as Record<string, unknown>, term, ["nombreComun", "nombreCientifico", "cultivosRelacionados"]),
+    ),
+  ] as Pest[]).slice(0, maxResults);
+}
+
+export async function searchProducts(term: string, maxResults = searchLimitDefault): Promise<Product[]> {
+  const byName = await searchPrefix("products", "nombre", term, maxResults);
+  if (!term.trim()) return byName;
+  return uniqueRows([
+    ...byName,
+    ...activeOnly(readLocal("products")).filter((product) =>
+      includesTerm(product as Record<string, unknown>, term, ["nombre", "marca", "tipoProducto", "unidadMedida"]),
+    ),
+  ] as Product[]).slice(0, maxResults);
+}
 
 export const saveUser = (value: Omit<AppUser, "id"> & { id?: string }) => saveCollectionItem("users", value);
 export const saveClient = (value: Omit<Client, "id"> & { id?: string }) => saveCollectionItem("clients", value);
