@@ -34,6 +34,18 @@ export default function ThermalTicketPage() {
     load();
   }, [isAdmin, params.id, router]);
 
+  function printTicket() {
+    const previousTitle = document.title;
+    document.title = "";
+    const restoreTitle = () => {
+      document.title = previousTitle;
+      window.removeEventListener("afterprint", restoreTitle);
+    };
+    window.addEventListener("afterprint", restoreTitle);
+    window.print();
+    window.setTimeout(restoreTitle, 1000);
+  }
+
   if (!stage) return <p className="text-sm font-medium">Cargando ticket...</p>;
 
   return (
@@ -41,24 +53,30 @@ export default function ThermalTicketPage() {
       <style jsx global>{`
         @media print {
           @page {
-            size: 80mm 200mm;
-            margin: 0;
+            size: 80mm auto;
+            margin: 0 !important;
           }
 
           html,
           body {
             width: 80mm;
             min-width: 80mm;
+            height: auto !important;
+            min-height: 0 !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
             overflow: visible !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
 
           .thermal-page-shell {
             display: block !important;
             width: 80mm !important;
             max-width: 80mm !important;
+            height: auto !important;
+            min-height: 0 !important;
             margin: 0 !important;
             padding: 0 !important;
           }
@@ -66,17 +84,26 @@ export default function ThermalTicketPage() {
           .thermal-ticket {
             width: 80mm !important;
             max-width: 80mm !important;
+            height: auto !important;
+            min-height: 0 !important;
             border: 0 !important;
             box-shadow: none !important;
             margin: 0 !important;
-            padding: 4mm !important;
+            padding: 2mm 4mm 0 !important;
             border-radius: 0 !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+          }
+
+          .thermal-ticket footer {
+            padding-bottom: 0 !important;
+            margin-bottom: 0 !important;
           }
         }
       `}</style>
 
       <div className="no-print flex justify-end">
-        <Button onClick={() => window.print()}>
+        <Button onClick={printTicket}>
           <Printer className="h-4 w-4" />
           Imprimir ticket
         </Button>
@@ -105,7 +132,6 @@ export default function ThermalTicketPage() {
 
         <footer className="grid justify-items-center gap-2 pt-3 text-center">
           <QRCodeSVG value={publicUrl} size={112} />
-          <p className="break-all text-[10px]">{publicUrl}</p>
         </footer>
       </article>
     </section>
