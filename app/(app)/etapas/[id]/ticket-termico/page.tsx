@@ -1,15 +1,13 @@
 "use client";
 
-import { QRCodeSVG } from "qrcode.react";
 import { Printer } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { CompanyLogo } from "@/components/company-logo";
 import { Button } from "@/components/ui/button";
-import { getSettings, getStage } from "@/lib/data";
+import { getStage } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
-import { buildPublicUrl } from "@/lib/whatsapp";
 import type { FumigationStage } from "@/types";
 
 export default function ThermalTicketPage() {
@@ -17,7 +15,6 @@ export default function ThermalTicketPage() {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const [stage, setStage] = useState<FumigationStage | null>(null);
-  const [publicUrl, setPublicUrl] = useState("");
 
   useEffect(() => {
     if (!isAdmin) {
@@ -26,9 +23,6 @@ export default function ThermalTicketPage() {
     }
     async function load() {
       const item = await getStage(params.id);
-      if (item) {
-        setPublicUrl(buildPublicUrl(item.code, await getSettings()));
-      }
       setStage(item);
     }
     load();
@@ -130,8 +124,11 @@ export default function ThermalTicketPage() {
           <Info label="Observacion tecnica" value={stage.technicalObservation} />
         </div>
 
-        <footer className="grid justify-items-center gap-2 pt-3 text-center">
-          <QRCodeSVG value={publicUrl} size={112} />
+        <footer className="grid justify-items-center gap-1 pt-3 text-center">
+          <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="h-20 w-auto object-contain" />
+          <p className="font-sans text-sm font-black text-[#1d3f9b]">Ivan Cabrera</p>
+          <p className="font-sans text-[11px] font-black uppercase tracking-wide text-[#1d3f9b]">INGENIERO AGRONOMO</p>
+          <p className="font-sans text-[11px] font-bold text-[#1d3f9b]">Reg.:1013-2017-1835382</p>
         </footer>
       </article>
     </section>

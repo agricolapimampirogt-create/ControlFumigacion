@@ -1,6 +1,5 @@
 "use client";
 
-import { QRCodeSVG } from "qrcode.react";
 import { Printer } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,9 +8,8 @@ import { CompanyLogo } from "@/components/company-logo";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getSettings, getStage } from "@/lib/data";
+import { getStage } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
-import { buildPublicUrl } from "@/lib/whatsapp";
 import type { FumigationStage } from "@/types";
 
 export default function TicketPage() {
@@ -19,7 +17,6 @@ export default function TicketPage() {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const [stage, setStage] = useState<FumigationStage | null>(null);
-  const [publicUrl, setPublicUrl] = useState("");
 
   useEffect(() => {
     if (!isAdmin) {
@@ -28,9 +25,6 @@ export default function TicketPage() {
     }
     async function load() {
       const item = await getStage(params.id);
-      if (item) {
-        setPublicUrl(buildPublicUrl(item.code, await getSettings()));
-      }
       setStage(item);
     }
     load();
@@ -89,9 +83,11 @@ export default function TicketPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between gap-4 border-t pt-4">
-            <p className="text-xs text-muted-foreground">{publicUrl}</p>
-            <QRCodeSVG value={publicUrl} size={116} />
+          <div className="grid justify-items-center gap-1 border-t pt-4 text-center">
+            <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="h-24 w-auto object-contain" />
+            <p className="text-sm font-black text-[#1d3f9b]">Ivan Cabrera</p>
+            <p className="text-xs font-black uppercase tracking-wide text-[#1d3f9b]">INGENIERO AGRONOMO</p>
+            <p className="text-xs font-bold text-[#1d3f9b]">Reg.:1013-2017-1835382</p>
           </div>
         </CardContent>
       </Card>
