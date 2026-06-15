@@ -83,11 +83,11 @@ export default function TicketPage() {
               </tbody>
             </table>
           </div>
-          <div className="grid justify-items-center gap-1 border-t pt-4 text-center">
-            <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="h-24 w-auto object-contain" />
-            <p className="text-sm font-black text-[#1d3f9b]">Ivan Cabrera</p>
-            <p className="text-xs font-black uppercase tracking-wide text-[#1d3f9b]">INGENIERO AGRONOMO</p>
-            <p className="text-xs font-bold text-[#1d3f9b]">Reg.:1013-2017-1835382</p>
+          <div className="grid justify-items-center gap-0 border-t pt-4 text-center font-mono text-black">
+            <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="w-64 max-w-full object-contain" />
+            <p className="text-sm font-black leading-tight">Ivan Cabrera</p>
+            <p className="text-xs font-black uppercase leading-tight">INGENIERO AGRONOMO</p>
+            <p className="text-xs font-black leading-tight">Reg.:1013-2017-1835382</p>
           </div>
         </CardContent>
       </Card>
