@@ -4,7 +4,6 @@ import { Printer } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
-import { CompanyLogo } from "@/components/company-logo";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,7 +42,7 @@ export default function TicketPage() {
       <Card>
         <CardContent className="grid gap-5">
           <div className="border-b pb-4 text-center">
-            <CompanyLogo className="mb-3 justify-center" imageClassName="h-20" />
+            <img src="/logo-ticket-black.png" alt="AGRICOLA PIMAMPIRO" className="mx-auto mb-3 h-20 w-auto object-contain" />
             <h1 className="text-2xl font-black">AGRICOLA PIMAMPIRO</h1>
             <p className="text-sm text-muted-foreground">Reporte administrativo de fumigacion</p>
           </div>
@@ -64,10 +63,6 @@ export default function TicketPage() {
             <p className="text-sm">{stage.pests.map((pest) => pest.name).join(", ")}</p>
           </div>
           <div>
-            <p className="font-semibold">Observacion tecnica</p>
-            <p className="text-sm">{stage.technicalObservation}</p>
-          </div>
-          <div>
             <p className="mb-2 font-semibold">Productos registrados</p>
             <table className="w-full text-left text-sm">
               <thead className="bg-emerald-50">
@@ -83,11 +78,15 @@ export default function TicketPage() {
               </tbody>
             </table>
           </div>
+          <div>
+            <p className="font-semibold">Observaciones</p>
+            <p className="text-sm">{stage.technicalObservation}</p>
+          </div>
           <div className="grid justify-items-center gap-0 border-t pt-4 text-center font-mono text-black">
             <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="w-64 max-w-full object-contain" />
-            <p className="text-sm font-black leading-tight">Ivan Cabrera</p>
-            <p className="text-xs font-black uppercase leading-tight">INGENIERO AGRONOMO</p>
-            <p className="text-xs font-black leading-tight">Reg.:1013-2017-1835382</p>
+            <p className="text-sm font-black leading-tight">Iván Cabrera</p>
+            <p className="text-xs font-black uppercase leading-tight">INGENIERO AGRÓNOMO</p>
+            <p className="text-xs font-black leading-tight">Registro Senescyt: 1013-2017-1835382</p>
           </div>
         </CardContent>
       </Card>

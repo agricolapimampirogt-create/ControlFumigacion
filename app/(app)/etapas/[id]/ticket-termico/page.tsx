@@ -4,7 +4,6 @@ import { Printer } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
-import { CompanyLogo } from "@/components/company-logo";
 import { Button } from "@/components/ui/button";
 import { getStage } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
@@ -105,7 +104,7 @@ export default function ThermalTicketPage() {
 
       <article className="thermal-ticket w-[80mm] max-w-full rounded-md border bg-white p-4 font-mono text-[12px] leading-snug text-black shadow-sm">
         <header className="border-b border-dashed border-black pb-3 text-center">
-          <CompanyLogo className="mb-2 justify-center" imageClassName="h-14" />
+          <img src="/logo-ticket-black.png" alt="AGRICOLA PIMAMPIRO" className="mx-auto mb-2 h-12 w-auto object-contain" />
           <h1 className="text-base font-black">AGRICOLA PIMAMPIRO</h1>
           <p className="mt-1 text-[11px] uppercase">Ticket de consulta</p>
         </header>
@@ -121,14 +120,29 @@ export default function ThermalTicketPage() {
 
         <div className="grid gap-2 border-b border-dashed border-black py-3">
           <Info label="Plagas" value={stage.pests.map((pest) => pest.name).join(", ")} />
-          <Info label="Observacion tecnica" value={stage.technicalObservation} />
+          <div>
+            <p className="font-bold">Productos:</p>
+            <div className="mt-1 grid gap-1">
+              {stage.products.length > 0 ? (
+                stage.products.map((product, index) => (
+                  <p key={`${product.productId}-${index}`} className="flex justify-between gap-3">
+                    <span>{product.name}</span>
+                    <span className="shrink-0 font-bold">{product.quantity}</span>
+                  </p>
+                ))
+              ) : (
+                <p>Sin productos registrados</p>
+              )}
+            </div>
+          </div>
+          <Info label="Observaciones" value={stage.technicalObservation} />
         </div>
 
         <footer className="grid justify-items-center gap-0 pt-2 text-center font-mono text-black">
           <img src="/ivan-cabrera-firma.png" alt="Firma Ivan Cabrera" className="w-[58mm] max-w-full object-contain" />
-          <p className="text-[13px] font-black leading-tight">Ivan Cabrera</p>
-          <p className="text-[12px] font-black uppercase leading-tight">INGENIERO AGRONOMO</p>
-          <p className="text-[12px] font-black leading-tight">Reg.:1013-2017-1835382</p>
+          <p className="text-[13px] font-black leading-tight">Iván Cabrera</p>
+          <p className="text-[12px] font-black uppercase leading-tight">INGENIERO AGRÓNOMO</p>
+          <p className="text-[12px] font-black leading-tight">Registro Senescyt: 1013-2017-1835382</p>
         </footer>
       </article>
     </section>
