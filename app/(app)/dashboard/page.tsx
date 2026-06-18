@@ -75,28 +75,28 @@ export default function DashboardPage() {
     <section className="grid gap-5">
       <div>
         <h1 className="text-2xl font-black text-emerald-950">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Resumen operativo de Agricola Pimampiro.</p>
+        <p className="text-sm text-muted-foreground">Resumen operativo de Agrícola Pimampiro.</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric icon={ClipboardList} label="Registros del dia" value={todayStages} />
+        <Metric icon={ClipboardList} label="Registros del día" value={todayStages} />
         <Metric icon={AlertCircle} label="Pendientes" value={pending} />
         <Metric icon={Users} label="Clientes" value={clients.length} />
         <Metric icon={Sprout} label="Cultivos" value={crops.length} />
         <Metric icon={Bug} label="Plaga frecuente" value={frequentPest} />
         <Metric icon={Package} label="Producto usado" value={usedProduct} />
-        <Metric icon={Leaf} label="Tecnicos activos" value={activeTechnicians} />
+        <Metric icon={Leaf} label="Técnicos activos" value={activeTechnicians} />
         <Metric icon={Bug} label="Plagas registradas" value={pests.length + products.length} />
       </div>
 
       <Card>
         <CardHeader className="grid gap-3 lg:grid-cols-[1fr_360px] lg:items-center">
-          <h2 className="font-bold">Ultimas etapas registradas</h2>
+          <h2 className="font-bold">Últimas etapas registradas</h2>
           <div className="relative">
             <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
             <Input
               className="pl-9"
-              placeholder="Buscar por codigo, cliente, cultivo, plaga, sitio..."
+              placeholder="Buscar por código, cliente, cultivo, plaga, sitio..."
               value={stageQuery}
               onChange={(event) => setStageQuery(event.target.value)}
             />
@@ -128,7 +128,7 @@ export default function DashboardPage() {
             ))}
             {!recentStages.length ? (
               <p className="rounded-md border bg-white px-4 py-6 text-center text-sm text-muted-foreground">
-                No se encontraron etapas con esa busqueda.
+                No se encontraron etapas con esa búsqueda.
               </p>
             ) : null}
           </div>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
           <table className="w-full table-fixed text-left text-sm">
             <thead className="bg-emerald-50 text-xs uppercase text-emerald-900">
               <tr>
-                <th className="w-[13%] px-3 py-3">Codigo</th>
+                <th className="w-[13%] px-3 py-3">Código</th>
                 <th className="w-[15%] px-3 py-3">Cliente</th>
                 <th className="w-[14%] px-3 py-3">Cultivo</th>
                 <th className="w-[16%] px-3 py-3">Plagas</th>
@@ -167,7 +167,7 @@ export default function DashboardPage() {
               {!recentStages.length ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-6 text-center text-sm text-muted-foreground">
-                    No se encontraron etapas con esa busqueda.
+                    No se encontraron etapas con esa búsqueda.
                   </td>
                 </tr>
               ) : null}
@@ -197,7 +197,7 @@ function StageActions({ stageId, align = "start" }: { stageId: string; align?: "
         </Button>
       </Link>
       <Link href={`/etapas/${stageId}/ticket-termico`}>
-        <Button className="w-full px-2" variant="outline" size="sm" aria-label="Ticket termico" title="Ticket">
+        <Button className="w-full px-2" variant="outline" size="sm" aria-label="Ticket térmico" title="Ticket">
           <ReceiptText className="h-4 w-4" />
           <span className="sr-only">Ticket</span>
         </Button>

@@ -35,8 +35,8 @@ export function StageList() {
     <section className="grid gap-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-emerald-950">Etapas de fumigacion</h1>
-          <p className="text-sm text-muted-foreground">Seguimiento tecnico por cliente, cultivo, tecnico y codigo.</p>
+          <h1 className="text-2xl font-black text-emerald-950">Etapas de fumigación</h1>
+          <p className="text-sm text-muted-foreground">Seguimiento técnico por cliente, cultivo, técnico y código.</p>
         </div>
         <Link
           className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-primary px-5 text-base font-medium text-primary-foreground transition hover:bg-emerald-800"
@@ -52,7 +52,7 @@ export function StageList() {
           <div className="grid gap-3 md:grid-cols-[1fr_220px]">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Buscar por codigo, cliente, cultivo..." value={query} onChange={(event) => setQuery(event.target.value)} />
+              <Input className="pl-9" placeholder="Buscar por código, cliente, cultivo..." value={query} onChange={(event) => setQuery(event.target.value)} />
             </div>
             <Select value={status} onChange={(event) => setStatus(event.target.value)}>
               <option value="">Todos los estados</option>
@@ -83,7 +83,7 @@ export function StageList() {
                   <MobileInfo label="Cliente" value={stage.clientName} />
                   <MobileInfo label="Cultivo" value={stage.cropName} />
                   <MobileInfo label="Sitio" value={stage.siteName} />
-                  <MobileInfo label="Tecnico" value={stage.technicianName} />
+                  <MobileInfo label="Técnico" value={stage.technicianName} />
                 </div>
 
                 <div className={isAdmin ? "grid grid-cols-3 gap-2" : "grid gap-2"}>
@@ -120,11 +120,11 @@ export function StageList() {
           <table className="w-full min-w-[860px] text-left text-sm">
             <thead className="bg-emerald-50 text-xs uppercase text-emerald-900">
               <tr>
-                <th className="px-4 py-3">Codigo</th>
+                <th className="px-4 py-3">Código</th>
                 <th className="px-4 py-3">Cliente</th>
                 <th className="px-4 py-3">Cultivo</th>
                 <th className="px-4 py-3">Sitio</th>
-                <th className="px-4 py-3">Tecnico</th>
+                <th className="px-4 py-3">Técnico</th>
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3">Fecha</th>
                 <th className="px-4 py-3 text-right">Acciones</th>

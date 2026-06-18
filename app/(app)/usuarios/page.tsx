@@ -8,7 +8,7 @@ export default function UsuariosPage() {
   return (
     <EntityManager
       title="Usuarios"
-      description="Administradores y tecnicos con acceso al sistema."
+      description="Administradores y técnicos con acceso al sistema."
       schema={userSchema}
       load={listUsers}
       save={saveUser}
@@ -16,8 +16,8 @@ export default function UsuariosPage() {
       fields={[
         { name: "nombre", label: "Nombre" },
         { name: "email", label: "Email" },
-        { name: "rol", label: "Rol", type: "select", options: [{ value: "tecnico", label: "Tecnico" }, { value: "admin", label: "Administrador" }] },
-        { name: "telefono", label: "Telefono" },
+        { name: "rol", label: "Rol", type: "select", options: [{ value: "tecnico", label: "Técnico" }, { value: "admin", label: "Administrador" }] },
+        { name: "telefono", label: "Teléfono" },
         { name: "estado", label: "Estado", type: "select", options: [{ value: "activo", label: "Activo" }, { value: "inactivo", label: "Inactivo" }] },
       ]}
       columns={[

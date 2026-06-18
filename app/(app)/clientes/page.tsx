@@ -16,17 +16,17 @@ export default function ClientesPage() {
       fields={[
         { name: "nombres", label: "Nombres" },
         { name: "apellidos", label: "Apellidos" },
-        { name: "cedula", label: "Cedula" },
-        { name: "telefono", label: "Telefono" },
+        { name: "cedula", label: "Cédula" },
+        { name: "telefono", label: "Teléfono" },
         { name: "whatsapp", label: "WhatsApp" },
-        { name: "direccion", label: "Direccion" },
+        { name: "direccion", label: "Dirección" },
         { name: "sector", label: "Sector" },
         { name: "estado", label: "Estado", type: "select", options: [{ value: "activo", label: "Activo" }, { value: "inactivo", label: "Inactivo" }] },
       ]}
       columns={[
         { key: "nombres", label: "Nombres" },
         { key: "apellidos", label: "Apellidos" },
-        { key: "telefono", label: "Telefono" },
+        { key: "telefono", label: "Teléfono" },
         { key: "sector", label: "Sector" },
         { key: "estado", label: "Estado" },
       ]}

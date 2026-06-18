@@ -43,7 +43,7 @@ export default function ReportesPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-black text-emerald-950">Reportes</h1>
-          <p className="text-sm text-muted-foreground">Analisis operativo y exportacion de registros.</p>
+          <p className="text-sm text-muted-foreground">Análisis operativo y exportación de registros.</p>
         </div>
         <Button onClick={exportCsv}>
           <Download className="h-4 w-4" />
@@ -63,10 +63,10 @@ export default function ReportesPage() {
       </div>
 
       <Card>
-        <CardHeader><h2 className="font-bold">Registros para auditoria</h2></CardHeader>
+        <CardHeader><h2 className="font-bold">Registros para auditoría</h2></CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="bg-emerald-50"><tr><th className="p-3">Codigo</th><th className="p-3">Cliente</th><th className="p-3">Cultivo</th><th className="p-3">Estado</th><th className="p-3">Tecnico</th></tr></thead>
+            <thead className="bg-emerald-50"><tr><th className="p-3">Código</th><th className="p-3">Cliente</th><th className="p-3">Cultivo</th><th className="p-3">Estado</th><th className="p-3">Técnico</th></tr></thead>
             <tbody>
               {stages.map((stage) => (
                 <tr key={stage.id} className="border-t"><td className="p-3 font-bold text-primary">{stage.code}</td><td className="p-3">{stage.clientName}</td><td className="p-3">{stage.cropName}</td><td className="p-3"><StatusBadge status={stage.status} /></td><td className="p-3">{stage.technicianName}</td></tr>

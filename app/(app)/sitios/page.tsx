@@ -8,7 +8,7 @@ export default function SitiosPage() {
   return (
     <EntityManager
       title="Sitios"
-      description="Sectores y ubicaciones de atencion tecnica."
+      description="Sectores y ubicaciones de atención técnica."
       schema={siteSchema}
       load={listSites}
       save={saveSite}

@@ -44,17 +44,17 @@ export default function TicketPage() {
           <div className="border-b pb-4 text-center">
             <img src="/logo-ticket-black.png" alt="AGRICOLA PIMAMPIRO" className="mx-auto mb-3 h-20 w-auto object-contain" />
             <h1 className="text-2xl font-black">AGRICOLA PIMAMPIRO</h1>
-            <p className="text-sm text-muted-foreground">Reporte administrativo de fumigacion</p>
+            <p className="text-sm text-muted-foreground">Reporte administrativo de fumigación</p>
           </div>
 
           <div className="grid gap-3 text-sm sm:grid-cols-2">
-            <Info label="Codigo" value={stage.code} />
+            <Info label="Código" value={stage.code} />
             <Info label="Fecha" value={formatDate(stage.createdAt)} />
             <Info label="Cliente" value={stage.clientName} />
-            <Info label="Telefono" value={stage.clientPhone} />
+            <Info label="Teléfono" value={stage.clientPhone} />
             <Info label="Cultivo" value={stage.cropName} />
             <Info label="Sitio" value={stage.siteName} />
-            <Info label="Tecnico" value={stage.technicianName} />
+            <Info label="Técnico" value={stage.technicianName} />
             <div><span className="font-semibold">Estado: </span><StatusBadge status={stage.status} /></div>
           </div>
 

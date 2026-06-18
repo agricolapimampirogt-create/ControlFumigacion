@@ -453,10 +453,10 @@ export function StageForm({ initial }: StageFormProps) {
     <form className="grid min-w-0 gap-4 pb-36 sm:gap-5 lg:pb-6" onSubmit={handleSubmit(onSubmit)}>
       <div className="grid gap-2">
         <h1 className="break-words text-2xl font-black leading-tight text-emerald-950">
-          {initial ? "Editar etapa" : "Nueva etapa de fumigacion"}
+          {initial ? "Editar etapa" : "Nueva etapa de fumigación"}
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Captura rapida para campo con busquedas limitadas y controles tactiles.
+          Captura rápida para campo con búsquedas limitadas y controles táctiles.
         </p>
         {saveError ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
@@ -467,12 +467,12 @@ export function StageForm({ initial }: StageFormProps) {
 
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
-          <SectionTitle icon={<User className="h-5 w-5" />} title="Cliente" detail="Busque por nombre, telefono o cedula." />
+          <SectionTitle icon={<User className="h-5 w-5" />} title="Cliente" detail="Busque por nombre, teléfono o cédula." />
         </CardHeader>
         <CardContent className="grid gap-4 p-4">
           <SearchBox<ClientOption>
             label="Buscar cliente"
-            placeholder="Ej. Maria, 099..., cedula"
+            placeholder="Ej. María, 099..., cédula"
             selectedLabel={selectedClient ? clientDisplayName(selectedClient) : ""}
             search={searchClientOptions}
             onSelect={selectClient}
@@ -502,7 +502,7 @@ export function StageForm({ initial }: StageFormProps) {
           ) : null}
 
           <div className="grid gap-3 rounded-md border bg-white p-3">
-            <p className="text-sm font-black text-emerald-950">Cliente rapido</p>
+            <p className="text-sm font-black text-emerald-950">Cliente rápido</p>
             <div className="grid gap-2 sm:grid-cols-[1fr_180px_auto]">
               <Input placeholder="Nombre del agricultor" value={quickName} onChange={(event) => setQuickName(event.target.value)} />
               <Input placeholder="WhatsApp" value={quickPhone} onChange={(event) => setQuickPhone(event.target.value)} />
@@ -530,7 +530,7 @@ export function StageForm({ initial }: StageFormProps) {
             renderResult={(site) => (
               <div className="grid gap-1">
                 <p className="font-black text-emerald-950">{site.nombre}</p>
-                <p className="text-xs font-semibold text-muted-foreground">{site.sector || "Ubicacion registrada"}</p>
+                <p className="text-xs font-semibold text-muted-foreground">{site.sector || "Ubicación registrada"}</p>
               </div>
             )}
             emptyText="No hay sitios relacionados. Escriba para buscar coincidencias limitadas."
@@ -625,8 +625,8 @@ export function StageForm({ initial }: StageFormProps) {
         <CardHeader className="bg-emerald-50 p-4">
           <SectionTitle
             icon={<Lock className="h-5 w-5" />}
-            title="Receta tecnica privada"
-            detail="Los productos registrados aqui no seran visibles para el cliente."
+            title="Receta técnica privada"
+            detail="Los productos registrados aquí no serán visibles para el cliente."
           />
         </CardHeader>
         <CardContent className="grid gap-4 p-4">
@@ -669,7 +669,7 @@ export function StageForm({ initial }: StageFormProps) {
 
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
-          <SectionTitle icon={<FileText className="h-5 w-5" />} title="Observaciones" detail="Separe el mensaje publico de las notas internas." />
+          <SectionTitle icon={<FileText className="h-5 w-5" />} title="Observaciones" detail="Separe el mensaje público de las notas internas." />
         </CardHeader>
         <CardContent className="grid gap-4 p-4 lg:grid-cols-2">
           <div className="rounded-md border border-sky-100 bg-sky-50 p-3">
@@ -743,7 +743,7 @@ export function StageForm({ initial }: StageFormProps) {
 
       <ConfirmDialog
         open={productDeleteIndex !== null}
-        description="Desea eliminar este producto de la receta privada?"
+        description="¿Desea eliminar este producto de la receta privada?"
         onCancel={() => setProductDeleteIndex(null)}
         onConfirm={confirmProductDelete}
       />

@@ -8,7 +8,7 @@ export default function ProductosPage() {
   return (
     <EntityManager
       title="Productos"
-      description="Productos internos recomendados por tecnicos y administracion."
+      description="Productos internos recomendados por técnicos y administración."
       schema={productSchema}
       load={listProducts}
       save={saveProduct}
@@ -19,7 +19,7 @@ export default function ProductosPage() {
         { name: "unidadMedida", label: "Unidad de medida" },
         { name: "tipoProducto", label: "Tipo de producto" },
         { name: "stock", label: "Stock", type: "number" },
-        { name: "descripcion", label: "Descripcion", type: "textarea" },
+        { name: "descripcion", label: "Descripción", type: "textarea" },
         { name: "estado", label: "Estado", type: "select", options: [{ value: "activo", label: "Activo" }, { value: "inactivo", label: "Inactivo" }] },
       ]}
       columns={[

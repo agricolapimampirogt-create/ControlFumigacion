@@ -8,7 +8,7 @@ export default function CultivosPage() {
   return (
     <EntityManager
       title="Cultivos"
-      description="Catalogo de cultivos atendidos por Agricola Pimampiro."
+      description="Catálogo de cultivos atendidos por Agrícola Pimampiro."
       schema={cropSchema}
       load={listCrops}
       save={saveCrop}
@@ -16,7 +16,7 @@ export default function CultivosPage() {
       fields={[
         { name: "nombre", label: "Nombre" },
         { name: "tipo", label: "Tipo" },
-        { name: "descripcion", label: "Descripcion", type: "textarea" },
+        { name: "descripcion", label: "Descripción", type: "textarea" },
         { name: "estado", label: "Estado", type: "select", options: [{ value: "activo", label: "Activo" }, { value: "inactivo", label: "Inactivo" }] },
       ]}
       columns={[

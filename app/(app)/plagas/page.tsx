@@ -14,16 +14,16 @@ export default function PlagasPage() {
       save={savePest}
       remove={deletePest}
       fields={[
-        { name: "nombreComun", label: "Nombre comun" },
-        { name: "nombreCientifico", label: "Nombre cientifico" },
+        { name: "nombreComun", label: "Nombre común" },
+        { name: "nombreCientifico", label: "Nombre científico" },
         { name: "cultivosRelacionados", label: "Cultivos relacionados" },
         { name: "nivelRiesgo", label: "Nivel de riesgo", type: "select", options: [{ value: "bajo", label: "Bajo" }, { value: "medio", label: "Medio" }, { value: "alto", label: "Alto" }] },
-        { name: "descripcion", label: "Descripcion", type: "textarea" },
+        { name: "descripcion", label: "Descripción", type: "textarea" },
         { name: "estado", label: "Estado", type: "select", options: [{ value: "activo", label: "Activo" }, { value: "inactivo", label: "Inactivo" }] },
       ]}
       columns={[
         { key: "nombreComun", label: "Nombre" },
-        { key: "nombreCientifico", label: "Cientifico" },
+        { key: "nombreCientifico", label: "Científico" },
         { key: "nivelRiesgo", label: "Riesgo" },
         { key: "estado", label: "Estado" },
       ]}

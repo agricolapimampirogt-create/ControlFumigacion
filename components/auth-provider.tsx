@@ -68,7 +68,7 @@ function authErrorMessage(error: unknown) {
     return "Login correcto, pero Firestore no permite leer el perfil. Despliega las reglas del proyecto.";
   }
 
-  return error instanceof Error ? error.message : "No se pudo iniciar sesion";
+  return error instanceof Error ? error.message : "No se pudo iniciar sesión";
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

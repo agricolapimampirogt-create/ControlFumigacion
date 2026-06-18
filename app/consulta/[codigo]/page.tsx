@@ -35,19 +35,19 @@ export default function PublicConsultationPage() {
     search(params.codigo);
   }, [params.codigo]);
 
-  const whatsapp = buildWhatsappUrl(settings.whatsapp || settings.phone, `Hola, necesito informacion sobre mi registro ${stage?.code || code}`);
-  const companyWhatsapp = buildWhatsappUrl(settings.whatsapp || settings.phone, "Hola, necesito informacion sobre AGRICOLA PIMAMPIRO.");
+  const whatsapp = buildWhatsappUrl(settings.whatsapp || settings.phone, `Hola, necesito información sobre mi registro ${stage?.code || code}`);
+  const companyWhatsapp = buildWhatsappUrl(settings.whatsapp || settings.phone, "Hola, necesito información sobre AGRICOLA PIMAMPIRO.");
   const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}`;
 
   return (
     <main className="min-h-screen">
       <section className="relative min-h-[320px] overflow-hidden bg-emerald-900 text-white">
-        <img src={publicHeroPhoto} alt="Agricola Pimampiro" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+        <img src={publicHeroPhoto} alt="Agrícola Pimampiro" className="absolute inset-0 h-full w-full object-cover opacity-35" />
         <div className="relative mx-auto flex max-w-5xl flex-col justify-end px-4 py-10 sm:min-h-[360px]">
           <CompanyLogo className="mb-5" imageClassName="h-24 rounded-md bg-white/95 p-2 shadow-sm" />
-          <p className="text-sm font-bold uppercase tracking-wide text-emerald-100">Consulta publica</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-emerald-100">Consulta pública</p>
           <h1 className="mt-2 text-4xl font-black sm:text-5xl">AGRICOLA PIMAMPIRO</h1>
-          <p className="mt-3 max-w-2xl text-emerald-50">Seguimiento de registro tecnico de fumigacion agricola.</p>
+          <p className="mt-3 max-w-2xl text-emerald-50">Seguimiento de registro técnico de fumigación agrícola.</p>
         </div>
       </section>
 
@@ -65,7 +65,7 @@ export default function PublicConsultationPage() {
         </Card>
 
         {notFound ? (
-          <Card><CardContent><p className="text-sm font-medium">No se encontro un registro publico con ese codigo.</p></CardContent></Card>
+          <Card><CardContent><p className="text-sm font-medium">No se encontró un registro público con ese código.</p></CardContent></Card>
         ) : null}
 
         {stage ? (
@@ -74,7 +74,7 @@ export default function PublicConsultationPage() {
               <CardContent className="grid gap-4">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
                   <div>
-                    <p className="text-sm font-bold text-muted-foreground">Codigo</p>
+                    <p className="text-sm font-bold text-muted-foreground">Código</p>
                     <h2 className="text-3xl font-black text-primary">{stage.code}</h2>
                   </div>
                   <StatusBadge status={stage.status} />
@@ -84,21 +84,21 @@ export default function PublicConsultationPage() {
                 <Info label="Cultivo" value={stage.cropName} />
                 <Info label="Sitio" value={stage.siteName} />
                 <Info label="Plagas detectadas" value={stage.pests.map((pest) => pest.name).join(", ")} />
-                <Info label="Observacion tecnica" value={stage.technicalObservation} />
+                <Info label="Observación técnica" value={stage.technicalObservation} />
               </CardContent>
             </Card>
 
             <Card>
               <CardContent className="grid gap-4">
-                <img src={publicLocalPhoto} alt="Local Agricola Pimampiro" className="h-44 w-full rounded-md object-cover" />
-                <Info label="Direccion" value={settings.address} />
+                <img src={publicLocalPhoto} alt="Local Agrícola Pimampiro" className="h-44 w-full rounded-md object-cover" />
+                <Info label="Dirección" value={settings.address} />
                 <Info label="Contacto" value={settings.phone} />
                 <div className="grid gap-2">
                   <a href={whatsapp} target="_blank">
                     <Button className="w-full"><MessageCircle className="h-4 w-4" />WhatsApp</Button>
                   </a>
                   <a href={maps} target="_blank">
-                    <Button variant="secondary" className="w-full"><MapPin className="h-4 w-4" />Como llegar</Button>
+                    <Button variant="secondary" className="w-full"><MapPin className="h-4 w-4" />Cómo llegar</Button>
                   </a>
                   <a href={companyWhatsapp} target="_blank" className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-primary">
                     <ExternalLink className="h-4 w-4" />

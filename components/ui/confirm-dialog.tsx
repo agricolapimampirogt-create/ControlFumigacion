@@ -17,7 +17,7 @@ type ConfirmDialogProps = {
 
 export function ConfirmDialog({
   open,
-  title = "Confirmar eliminacion",
+  title = "Confirmar eliminación",
   description,
   confirmLabel = "Si, eliminar",
   cancelLabel = "No, cancelar",
@@ -46,7 +46,7 @@ export function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-end bg-emerald-950/35 p-3 backdrop-blur-sm sm:place-items-center sm:p-4">
-      <button className="absolute inset-0 cursor-default" type="button" aria-label="Cerrar confirmacion" onClick={busy ? undefined : onCancel} />
+      <button className="absolute inset-0 cursor-default" type="button" aria-label="Cerrar confirmación" onClick={busy ? undefined : onCancel} />
       <section
         className="relative w-full max-w-md overflow-hidden rounded-lg border border-emerald-100 bg-white shadow-2xl"
         role="dialog"

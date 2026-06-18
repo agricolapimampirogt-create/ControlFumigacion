@@ -70,17 +70,17 @@ export default function StageDetailPage() {
             <Info label="Cultivo" value={stage.cropName} />
             <Info label="Sitio" value={stage.siteName} />
             <Info label="Plagas" value={stage.pests.map((pest) => pest.name).join(", ")} />
-            <Info label="Observacion tecnica" value={stage.technicalObservation} />
+            <Info label="Observación técnica" value={stage.technicalObservation} />
             <div><span className="font-semibold">Estado: </span><StatusBadge status={stage.status} /></div>
-            <Info label="Consulta publica" value={publicUrl} />
+            <Info label="Consulta pública" value={publicUrl} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader><h2 className="font-bold">Datos internos</h2></CardHeader>
           <CardContent className="grid gap-3 text-sm">
-            <Info label="Telefono" value={stage.clientPhone} />
-            <Info label="Tecnico" value={stage.technicianName} />
+            <Info label="Teléfono" value={stage.clientPhone} />
+            <Info label="Técnico" value={stage.technicianName} />
             <Info label="Notas internas" value={stage.internalNotes || "Sin notas internas"} />
             <div>
               <p className="mb-2 font-semibold">Productos registrados</p>

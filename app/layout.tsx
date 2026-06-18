@@ -4,7 +4,7 @@ import { AuthProvider } from "@/components/auth-provider";
 
 export const metadata: Metadata = {
   title: "AGRICOLA PIMAMPIRO",
-  description: "Control y seguimiento de fumigaciones agricolas.",
+  description: "Control y seguimiento de fumigaciones agrícolas.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

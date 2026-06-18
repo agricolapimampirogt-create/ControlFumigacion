@@ -145,7 +145,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <p className="text-xs capitalize text-muted-foreground">{user?.rol}</p>
               <Button variant="danger" className="mt-3 h-12 w-full justify-center" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
-                Cerrar sesion
+                Cerrar sesión
               </Button>
             </div>
           </div>

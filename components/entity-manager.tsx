@@ -284,7 +284,7 @@ export function EntityManager<T extends { id: string; estado?: string }>({
       </Card>
       <ConfirmDialog
         open={Boolean(deleteTarget)}
-        description={`Desea eliminar "${deleteLabel(deleteTarget)}"? Esta accion no se puede deshacer.`}
+        description={`¿Desea eliminar "${deleteLabel(deleteTarget)}"? Esta acción no se puede deshacer.`}
         busy={isDeleting}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}

@@ -25,7 +25,7 @@ export const seedUsers: AppUser[] = [
   },
   {
     id: "tecnico-demo",
-    nombre: "Tecnico 1",
+    nombre: "Técnico 1",
     email: "tecnico@agricolapimampiro.com",
     rol: "tecnico",
     telefono: "0990000000",
@@ -64,19 +64,19 @@ export const seedClients: Client[] = [
 
 export const seedCrops: Crop[] = [
   { id: "cultivo-mango", nombre: "Mango", tipo: "Frutal", descripcion: "Cultivo frutal tropical", estado: "activo" },
-  { id: "cultivo-tomate", nombre: "Tomate rinon", tipo: "Hortaliza", descripcion: "Produccion bajo campo abierto", estado: "activo" },
+  { id: "cultivo-tomate", nombre: "Tomate riñón", tipo: "Hortaliza", descripcion: "Producción bajo campo abierto", estado: "activo" },
   { id: "cultivo-aguacate", nombre: "Aguacate", tipo: "Frutal", descripcion: "Variedades de altura", estado: "activo" },
 ];
 
 export const seedPests: Pest[] = [
-  { id: "plaga-trips", nombreComun: "Trips", nombreCientifico: "Thysanoptera", descripcion: "Dano en hojas y frutos tiernos", cultivosRelacionados: "Mango, tomate, aguacate", nivelRiesgo: "alto", estado: "activo" },
+  { id: "plaga-trips", nombreComun: "Trips", nombreCientifico: "Thysanoptera", descripcion: "Daño en hojas y frutos tiernos", cultivosRelacionados: "Mango, tomate, aguacate", nivelRiesgo: "alto", estado: "activo" },
   { id: "plaga-botrytis", nombreComun: "Botrytis", nombreCientifico: "Botrytis cinerea", descripcion: "Moho gris en flor y fruto", cultivosRelacionados: "Tomate, frutales", nivelRiesgo: "medio", estado: "activo" },
   { id: "plaga-mancha", nombreComun: "Mancha foliar", descripcion: "Lesiones en hojas con necrosis", cultivosRelacionados: "Mango, aguacate", nivelRiesgo: "medio", estado: "activo" },
 ];
 
 export const seedProducts: Product[] = [
-  { id: "producto-kanon", nombre: "Kanon Plus", marca: "Agroline", unidadMedida: "unidad", tipoProducto: "Fungicida", descripcion: "Producto interno registrado por tecnico", stock: 24, estado: "activo" },
-  { id: "producto-duplex", nombre: "Duplex 500gr", marca: "Agroline", unidadMedida: "500gr", tipoProducto: "Insecticida", descripcion: "Presentacion de 500 gramos", stock: 18, estado: "activo" },
+  { id: "producto-kanon", nombre: "Kanon Plus", marca: "Agroline", unidadMedida: "unidad", tipoProducto: "Fungicida", descripcion: "Producto interno registrado por técnico", stock: 24, estado: "activo" },
+  { id: "producto-duplex", nombre: "Duplex 500gr", marca: "Agroline", unidadMedida: "500gr", tipoProducto: "Insecticida", descripcion: "Presentación de 500 gramos", stock: 18, estado: "activo" },
   { id: "producto-tieso", nombre: "Tieso 100gr", marca: "Campo Verde", unidadMedida: "100gr", tipoProducto: "Coadyuvante", descripcion: "Apoyo para mezcla", stock: 40, estado: "activo" },
 ];
 
@@ -101,7 +101,7 @@ export const seedStages: FumigationStage[] = [
       { pestId: "plaga-botrytis", name: "Botrytis" },
       { pestId: "plaga-mancha", name: "Mancha foliar" },
     ],
-    technicalObservation: "Cultivo presenta dano en hojas y fruto en formacion.",
+    technicalObservation: "Cultivo presenta daño en hojas y fruto en formación.",
     products: [
       { productId: "producto-kanon", name: "Kanon Plus", quantity: 1 },
       { productId: "producto-duplex", name: "Duplex 500gr", quantity: 1 },
@@ -109,7 +109,7 @@ export const seedStages: FumigationStage[] = [
     ],
     status: "pendiente_receta",
     technicianId: "tecnico-demo",
-    technicianName: "Tecnico 1",
+    technicianName: "Técnico 1",
     createdAt: todayIso(),
     updatedAt: todayIso(),
   },

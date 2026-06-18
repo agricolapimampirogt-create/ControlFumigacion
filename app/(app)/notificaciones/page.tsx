@@ -21,14 +21,14 @@ export default function NotificacionesPage() {
         <p className="text-sm text-muted-foreground">Historial de mensajes enviados por WhatsApp.</p>
       </div>
       <Card>
-        <CardHeader><h2 className="flex items-center gap-2 font-bold"><Bell className="h-4 w-4" />Envios</h2></CardHeader>
+        <CardHeader><h2 className="flex items-center gap-2 font-bold"><Bell className="h-4 w-4" />Envíos</h2></CardHeader>
         <CardContent className="grid gap-3">
           {rows.length ? rows.map((item) => (
             <div key={item.id} className="rounded-md border p-3 text-sm">
               <p className="font-bold">{item.code} · {item.clientName}</p>
               <p className="text-muted-foreground">{item.channel} · {item.status} · {formatDate(item.createdAt)}</p>
             </div>
-          )) : <p className="text-sm text-muted-foreground">Aun no hay notificaciones registradas.</p>}
+          )) : <p className="text-sm text-muted-foreground">Aún no hay notificaciones registradas.</p>}
         </CardContent>
       </Card>
     </section>

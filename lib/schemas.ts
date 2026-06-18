@@ -6,7 +6,7 @@ export const clientSchema = z.object({
   nombres: z.string().min(2, "Ingrese nombres"),
   apellidos: z.string().min(2, "Ingrese apellidos"),
   cedula: z.string().optional(),
-  telefono: z.string().min(7, "Telefono requerido"),
+  telefono: z.string().min(7, "Teléfono requerido"),
   whatsapp: z.string().min(7, "WhatsApp requerido"),
   direccion: z.string().optional(),
   sector: z.string().optional(),
@@ -62,7 +62,7 @@ export const stageSchema = z.object({
   cropId: z.string().min(1, "Seleccione cultivo"),
   siteId: z.string().min(1, "Seleccione sitio"),
   pestIds: z.array(z.string()).min(1, "Seleccione al menos una plaga"),
-  technicalObservation: z.string().min(10, "Agregue una observacion tecnica"),
+  technicalObservation: z.string().min(10, "Agregue una observación técnica"),
   products: z
     .array(
       z.object({

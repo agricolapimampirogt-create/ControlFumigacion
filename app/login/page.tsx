@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
-  email: z.string().email("Email invalido"),
+  email: z.string().email("Email inválido"),
   password: z.string().min(4, "Ingrese clave"),
 });
 
@@ -39,7 +39,7 @@ export default function LoginPage() {
       await login(values.email, values.password);
       router.push("/dashboard");
     } catch (error) {
-      setError("email", { message: error instanceof Error ? error.message : "No se pudo iniciar sesion" });
+      setError("email", { message: error instanceof Error ? error.message : "No se pudo iniciar sesión" });
     }
   }
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
         <div className="mb-6 text-center">
           <CompanyLogo className="mb-4 justify-center" imageClassName="h-28 max-w-full" />
           <h1 className="text-3xl font-black text-emerald-950">AGRICOLA PIMAMPIRO</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Control tecnico de fumigaciones agricolas</p>
+          <p className="mt-2 text-sm text-muted-foreground">Control técnico de fumigaciones agrícolas</p>
         </div>
 
         <Card>
@@ -63,7 +63,7 @@ export default function LoginPage() {
               </Field>
               <Button type="submit" size="lg" disabled={isSubmitting}>
                 <LogIn className="h-5 w-5" />
-                Iniciar sesion
+                Iniciar sesión
               </Button>
             </form>
             <p className="mt-4 rounded-md bg-emerald-50 p-3 text-xs text-emerald-900">

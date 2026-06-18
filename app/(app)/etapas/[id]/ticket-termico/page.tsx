@@ -106,11 +106,11 @@ export default function ThermalTicketPage() {
         <header className="border-b border-dashed border-black pb-3 text-center">
           <img src="/logo-ticket-black.png" alt="AGRICOLA PIMAMPIRO" className="mx-auto mb-2 h-12 w-auto object-contain" />
           <h1 className="text-base font-black">AGRICOLA PIMAMPIRO</h1>
-          <p className="mt-1 text-[11px] uppercase">RECETA AGRICOLA</p>
+          <p className="mt-1 text-[11px] uppercase">RECETA AGRÍCOLA</p>
         </header>
 
         <div className="grid gap-2 border-b border-dashed border-black py-3">
-          <Info label="Codigo" value={stage.code} />
+          <Info label="Código" value={stage.code} />
           <Info label="Fecha" value={formatDate(stage.createdAt)} />
           <Info label="Cliente" value={stage.clientName} />
           <Info label="Cultivo" value={stage.cropName} />
