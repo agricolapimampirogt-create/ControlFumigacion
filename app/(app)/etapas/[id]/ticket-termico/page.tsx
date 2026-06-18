@@ -106,7 +106,7 @@ export default function ThermalTicketPage() {
         <header className="border-b border-dashed border-black pb-3 text-center">
           <img src="/logo-ticket-black.png" alt="AGRICOLA PIMAMPIRO" className="mx-auto mb-2 h-12 w-auto object-contain" />
           <h1 className="text-base font-black">AGRICOLA PIMAMPIRO</h1>
-          <p className="mt-1 text-[11px] uppercase">Ticket de consulta</p>
+          <p className="mt-1 text-[11px] uppercase">RECETA AGRICOLA</p>
         </header>
 
         <div className="grid gap-2 border-b border-dashed border-black py-3">

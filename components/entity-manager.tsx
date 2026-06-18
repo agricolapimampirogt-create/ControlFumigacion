@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit, Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { ZodTypeAny } from "zod";
 import { useAuth } from "@/components/auth-provider";
@@ -49,11 +49,13 @@ export function EntityManager<T extends { id: string; estado?: string }>({
   const [formError, setFormError] = useState("");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const formPanelRef = useRef<HTMLDivElement | null>(null);
 
   const {
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<Record<string, unknown>>({
     resolver: zodResolver(schema),
@@ -79,11 +81,22 @@ export function EntityManager<T extends { id: string; estado?: string }>({
     setOpen(true);
   }
 
+  function focusFormPanel() {
+    const firstField = fields[0]?.name;
+    window.requestAnimationFrame(() => {
+      formPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (firstField) {
+        window.requestAnimationFrame(() => setFocus(firstField));
+      }
+    });
+  }
+
   function startEdit(row: T) {
     setEditing(row);
     setFormError("");
     reset(row);
     setOpen(true);
+    focusFormPanel();
   }
 
   async function onSubmit(values: Record<string, unknown>) {
@@ -129,48 +142,50 @@ export function EntityManager<T extends { id: string; estado?: string }>({
       </div>
 
       {open ? (
-        <Card className="overflow-hidden">
-          <CardHeader className="p-3 sm:p-4">
-            <h2 className="text-base font-bold sm:text-lg">{editing ? "Editar registro" : "Nuevo registro"}</h2>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-4">
-            {formError ? (
-              <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                {formError}
-              </p>
-            ) : null}
-            <form className="grid min-w-0 gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-              {fields.map((field) => {
-                const error = errors[field.name]?.message as string | undefined;
-                return (
-                  <Field key={field.name} label={field.label} error={error}>
-                    {field.type === "textarea" ? (
-                      <Textarea {...register(field.name)} />
-                    ) : field.type === "select" ? (
-                      <Select {...register(field.name)}>
-                        {field.options?.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </Select>
-                    ) : (
-                      <Input type={field.type || "text"} {...register(field.name)} />
-                    )}
-                  </Field>
-                );
-              })}
-              <div className="grid gap-2 sm:grid-cols-2 md:col-span-2 md:flex">
-                <Button className="w-full md:w-auto" type="submit" disabled={isSubmitting}>
-                  Guardar
-                </Button>
-                <Button className="w-full md:w-auto" type="button" variant="outline" onClick={() => setOpen(false)}>
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <div ref={formPanelRef} className="scroll-mt-24">
+          <Card className="overflow-hidden">
+            <CardHeader className="p-3 sm:p-4">
+              <h2 className="text-base font-bold sm:text-lg">{editing ? "Editar registro" : "Nuevo registro"}</h2>
+            </CardHeader>
+            <CardContent className="p-3 sm:p-4">
+              {formError ? (
+                <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                  {formError}
+                </p>
+              ) : null}
+              <form className="grid min-w-0 gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+                {fields.map((field) => {
+                  const error = errors[field.name]?.message as string | undefined;
+                  return (
+                    <Field key={field.name} label={field.label} error={error}>
+                      {field.type === "textarea" ? (
+                        <Textarea {...register(field.name)} />
+                      ) : field.type === "select" ? (
+                        <Select {...register(field.name)}>
+                          {field.options?.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </Select>
+                      ) : (
+                        <Input type={field.type || "text"} {...register(field.name)} />
+                      )}
+                    </Field>
+                  );
+                })}
+                <div className="grid gap-2 sm:grid-cols-2 md:col-span-2 md:flex">
+                  <Button className="w-full md:w-auto" type="submit" disabled={isSubmitting}>
+                    Guardar
+                  </Button>
+                  <Button className="w-full md:w-auto" type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Cancelar
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       ) : null}
 
       <Card>

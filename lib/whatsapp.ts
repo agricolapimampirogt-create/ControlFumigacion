@@ -39,7 +39,7 @@ export function buildWhatsappMessage(
     `Contacto: ${settings.phone}`,
     "",
     settings.businessName,
-    "Soluciones para el cuidado de sus cultivos.",
+    "Al servicio del Agricultor.",
   ].join("\n");
 }
 

@@ -14,6 +14,9 @@ import { formatDate } from "@/lib/utils";
 import { buildWhatsappUrl } from "@/lib/whatsapp";
 import type { PublicStage, Settings } from "@/types";
 
+const publicHeroPhoto = "/agricola-public-hero.webp";
+const publicLocalPhoto = "/agricola-public-local.webp";
+
 export default function PublicConsultationPage() {
   const params = useParams<{ codigo: string }>();
   const [code, setCode] = useState(params.codigo || "");
@@ -39,7 +42,7 @@ export default function PublicConsultationPage() {
   return (
     <main className="min-h-screen">
       <section className="relative min-h-[320px] overflow-hidden bg-emerald-900 text-white">
-        <img src={settings.photoUrl} alt="Agricola Pimampiro" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+        <img src={publicHeroPhoto} alt="Agricola Pimampiro" className="absolute inset-0 h-full w-full object-cover opacity-35" />
         <div className="relative mx-auto flex max-w-5xl flex-col justify-end px-4 py-10 sm:min-h-[360px]">
           <CompanyLogo className="mb-5" imageClassName="h-24 rounded-md bg-white/95 p-2 shadow-sm" />
           <p className="text-sm font-bold uppercase tracking-wide text-emerald-100">Consulta publica</p>
@@ -87,7 +90,7 @@ export default function PublicConsultationPage() {
 
             <Card>
               <CardContent className="grid gap-4">
-                <img src={settings.photoUrl} alt="Local Agricola Pimampiro" className="h-44 w-full rounded-md object-cover" />
+                <img src={publicLocalPhoto} alt="Local Agricola Pimampiro" className="h-44 w-full rounded-md object-cover" />
                 <Info label="Direccion" value={settings.address} />
                 <Info label="Contacto" value={settings.phone} />
                 <div className="grid gap-2">
